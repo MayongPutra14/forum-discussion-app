@@ -22,7 +22,7 @@ describe('talksReducer function', () => {
     const nextState = talksReducer(initialState, action);
 
     // 3. Assert
-    expect(nextState).toEqual('HARUS_ERROR');
+    expect(nextState).toEqual(initialState);
   });
 
   it('should return the talks when given by RECEIVE_TALK action', () => {

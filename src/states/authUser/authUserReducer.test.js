@@ -21,7 +21,7 @@ describe('authUserReducer function', () => {
     const nextState = authUserReducer(initialState, action);
 
     // 3. Assert
-    expect(nextState).toBe('HARUS ERROR');
+    expect(nextState).toBe(initialState);
   });
 
   it('should return the authUser when given by SET_AUTH_USER action', () => {

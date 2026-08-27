@@ -6,6 +6,8 @@
  *   - should handle category typing correctly
  *   - should handle body typing correctly
  *   - should call addTalk function when post button is clicked
+ *   - should not call addTalk function when title or body is empty
+ *   - should reset inputs after successfully calling addTalk
  */
 
 import React from 'react';
@@ -20,43 +22,33 @@ describe('TalkInput component', () => {
   });
 
   it('should handle title typing correctly', async () => {
-    // 1. Arrange
     render(<TalkInput addTalk={() => {}} />);
     const titleInput = screen.getByPlaceholderText('Discussion title');
 
-    // 2. Action
     await userEvent.type(titleInput, 'Judul Diskusi Baru');
 
-    // 3. Assert
     expect(titleInput).toHaveValue('Judul Diskusi Baru');
   });
 
   it('should handle category typing correctly', async () => {
-    // 1. Arrange
     render(<TalkInput addTalk={() => {}} />);
     const categoryInput = screen.getByPlaceholderText('Category (optional)');
 
-    // 2. Action
     await userEvent.type(categoryInput, 'react');
 
-    // 3. Assert
     expect(categoryInput).toHaveValue('react');
   });
 
   it('should handle body typing correctly', async () => {
-    // 1. Arrange
     render(<TalkInput addTalk={() => {}} />);
     const bodyInput = screen.getByPlaceholderText('What are you thinking?');
 
-    // 2. Action
     await userEvent.type(bodyInput, 'Ini isi konten diskusi baru.');
 
-    // 3. Assert
     expect(bodyInput).toHaveValue('Ini isi konten diskusi baru.');
   });
 
   it('should call addTalk function when post button is clicked', async () => {
-    // 1. Arrange
     const mockAddTalk = vi.fn();
     render(<TalkInput addTalk={mockAddTalk} />);
     const titleInput = screen.getByPlaceholderText('Discussion title');
@@ -64,17 +56,46 @@ describe('TalkInput component', () => {
     const bodyInput = screen.getByPlaceholderText('What are you thinking?');
     const postButton = screen.getByRole('button', { name: 'Post Threads' });
 
-    // 2. Action
     await userEvent.type(titleInput, 'Judul Diskusi Baru');
     await userEvent.type(categoryInput, 'react');
     await userEvent.type(bodyInput, 'Ini isi konten diskusi baru.');
     await userEvent.click(postButton);
 
-    // 3. Assert
     expect(mockAddTalk).toHaveBeenCalledWith({
       title: 'Judul Diskusi Baru',
       category: 'react',
       body: 'Ini isi konten diskusi baru.',
     });
+  });
+
+  it('should not call addTalk function when title or body is empty', async () => {
+    const mockAddTalk = vi.fn();
+    render(<TalkInput addTalk={mockAddTalk} />);
+    const titleInput = screen.getByPlaceholderText('Discussion title');
+    const postButton = screen.getByRole('button', { name: 'Post Threads' });
+
+    // Hanya mengisi title tanpa body
+    await userEvent.type(titleInput, 'Judul Diskusi Saja');
+    await userEvent.click(postButton);
+
+    expect(mockAddTalk).not.toHaveBeenCalled();
+  });
+
+  it('should reset inputs after successfully calling addTalk', async () => {
+    const mockAddTalk = vi.fn();
+    render(<TalkInput addTalk={mockAddTalk} />);
+    const titleInput = screen.getByPlaceholderText('Discussion title');
+    const categoryInput = screen.getByPlaceholderText('Category (optional)');
+    const bodyInput = screen.getByPlaceholderText('What are you thinking?');
+    const postButton = screen.getByRole('button', { name: 'Post Threads' });
+
+    await userEvent.type(titleInput, 'Judul Diskusi Baru');
+    await userEvent.type(categoryInput, 'react');
+    await userEvent.type(bodyInput, 'Ini isi konten diskusi baru.');
+    await userEvent.click(postButton);
+
+    expect(titleInput).toHaveValue('');
+    expect(categoryInput).toHaveValue('');
+    expect(bodyInput).toHaveValue('');
   });
 });

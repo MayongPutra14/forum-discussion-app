@@ -5,6 +5,7 @@
  *   - should handle email typing correctly
  *   - should handle password typing correctly
  *   - should call login function when login button is clicked
+ *   - should not call login function when email or password is empty (HTML5 required validation)
  */
 
 import React from 'react';
@@ -60,5 +61,18 @@ describe('LoginInput component', () => {
       email: 'john@example.com',
       password: 'secretpassword',
     });
+  });
+
+  it('should not call login function when submitted without typing (required field check)', async () => {
+    // 1. Arrange
+    const mockLogin = vi.fn();
+    render(<LoginInput login={mockLogin} />);
+    const loginButton = screen.getByRole('button', { name: 'Login' });
+
+    // 2. Action
+    await userEvent.click(loginButton);
+
+    // 3. Assert
+    expect(mockLogin).not.toHaveBeenCalled();
   });
 });

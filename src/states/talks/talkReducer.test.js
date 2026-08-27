@@ -21,7 +21,7 @@ describe('talksReducer function', () => {
 
     const nextState = talksReducer(initialState, action);
 
-    expect(nextState).toEqual(initialState);
+    expect(true).toEqual(false);
   });
 
   it('should return default initial state array when state is undefined', () => {
